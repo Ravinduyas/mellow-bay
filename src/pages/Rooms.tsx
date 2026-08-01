@@ -25,8 +25,8 @@ export const Rooms: React.FC = () => {
         eyebrow="Where you sleep"
         title="Five ways to stay"
         intro="A private double, a family suite, or a bed in one of the air-conditioned dorms — all a few minutes from Weligama Beach."
-        image={IMAGES.heroHouse}
-        imageAlt="Rooms at Mellow Bay"
+        image={IMAGES.roomKingBed}
+        imageAlt="A private room at Mellow Bay"
       />
 
       <Slab>

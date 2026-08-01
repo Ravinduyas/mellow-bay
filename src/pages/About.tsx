@@ -29,8 +29,8 @@ export const About: React.FC = () => {
         eyebrow="About us"
         title="A hostel that people keep not leaving"
         intro="Mellow Bay is a beachfront hostel, restaurant and coworking space on Sri Lanka's south coast — built for travellers who arrive for a few nights and rearrange their plans."
-        image={IMAGES.heroHouse}
-        imageAlt="Mellow Bay, Weligama"
+        image={IMAGES.terraceNight}
+        imageAlt="Guests on the terrace at Mellow Bay after dark"
       />
 
       <Slab>
@@ -125,8 +125,8 @@ export const About: React.FC = () => {
 
             <div className="lg:col-span-5 aspect-[4/3] lg:aspect-auto lg:min-h-[300px] bg-ink-soft overflow-hidden order-first lg:order-last">
               <img
-                src={IMAGES.facadeVentilation}
-                alt="The beach at Weligama"
+                src={IMAGES.gardenTerraceDay}
+                alt="Guests on the garden terrace"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover opacity-90"
               />

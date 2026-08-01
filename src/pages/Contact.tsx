@@ -15,8 +15,8 @@ export const Contact: React.FC = () => {
         eyebrow="Find us"
         title="Matara Road, Weligama"
         intro="On the beach side of the Matara Road in Pelena, a six-minute walk from Weligama Beach and under an hour from Koggala Airport."
-        image={IMAGES.heroHouse}
-        imageAlt="Mellow Bay in Weligama"
+        image={IMAGES.courtyardAbove}
+        imageAlt="The courtyard at Mellow Bay in Weligama"
       />
 
       <Slab>

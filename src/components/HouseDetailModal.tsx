@@ -20,7 +20,7 @@ export const HouseDetailModal: React.FC<RoomDetailModalProps> = ({
   if (!project) return null;
 
   const currentImg = selectedImage || project.imageUrl;
-  const thumbnails = [project.imageUrl, IMAGES.houseBlueprint];
+  const thumbnails = [project.imageUrl, IMAGES.roomPillowDetail];
 
   return (
     <div className="fixed inset-0 z-50 bg-ink/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">

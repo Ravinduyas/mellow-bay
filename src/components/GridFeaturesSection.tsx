@@ -56,9 +56,11 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
           </h3>
 
           <div className="mt-4 flex-1 relative overflow-hidden rounded-[14px] bg-slate-100">
+            {/* TODO: no beach photograph exists in the current shoot — this is the
+                courtyard. Swap in a real beach frame when one is available. */}
             <img
-              src={IMAGES.heroHouse}
-              alt="Private beach area"
+              src={IMAGES.courtyardAbove}
+              alt="The courtyard and garden, looking out over the palms"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />
@@ -104,8 +106,8 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
 
           <div className="mt-4 flex-1 relative overflow-hidden rounded-[14px] bg-ink-soft">
             <img
-              src={IMAGES.facadeVentilation}
-              alt="Restaurant and bar"
+              src={IMAGES.restaurantTables}
+              alt="The restaurant, with the kitchen counter behind"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover opacity-90"
             />
@@ -123,8 +125,8 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
 
           <div className="mt-4 flex-1 relative overflow-hidden rounded-[14px] bg-slate-100">
             <img
-              src={IMAGES.roofingBuilder}
-              alt="Coworking and garden terrace"
+              src={IMAGES.coworkingDesks}
+              alt="Desks in the coworking space"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />

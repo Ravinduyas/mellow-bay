@@ -63,7 +63,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     title: 'Rooms and dorms',
     description:
       'Private doubles, a family suite and custom-built cement bunk dorms — all with air-conditioning, private bathrooms and sea views.',
-    imageUrl: IMAGES.houseBlueprint,
+    imageUrl: IMAGES.roomDouble,
     features: ['Air-conditioning', 'Private bathrooms', 'Sea views'],
     href: '/rooms',
   },
@@ -72,7 +72,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     title: 'Restaurant and bar',
     description:
       'Indian, seafood, Russian, local and European dishes from breakfast through cocktail hour, with full English/Irish, vegan and Asian breakfasts.',
-    imageUrl: IMAGES.facadeVentilation,
+    imageUrl: IMAGES.restaurantSeating,
     features: ['Breakfast to dinner', 'Vegetarian options', 'Bar and high tea'],
     href: '/eat-and-work#eat',
   },
@@ -81,7 +81,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     title: 'Coworking and yoga',
     description:
       'A dedicated workspace for guests staying long-term, plus yoga classes, evening entertainment, a lounge and a garden terrace.',
-    imageUrl: IMAGES.roofingBuilder,
+    imageUrl: IMAGES.coworkingPeople,
     features: ['Free WiFi', 'Yoga classes', 'Garden terrace'],
     href: '/eat-and-work#work',
   },
@@ -94,28 +94,28 @@ export const SITE_SECTIONS = [
     label: 'Rooms',
     title: 'Five ways to stay',
     detail: 'A private double, a family suite, or a bed in one of the air-conditioned dorms.',
-    imageUrl: IMAGES.heroHouse,
+    imageUrl: IMAGES.roomKingBed,
   },
   {
     to: '/eat-and-work',
     label: 'Eat & work',
     title: 'The restaurant and the workspace',
     detail: 'Five cuisines from breakfast to cocktail hour, and a desk for the long stays.',
-    imageUrl: IMAGES.facadeVentilation,
+    imageUrl: IMAGES.restaurantTables,
   },
   {
     to: '/about',
     label: 'About',
     title: 'What the place actually is',
     detail: 'Private beach, garden, bar and coliving on the south coast of Sri Lanka.',
-    imageUrl: IMAGES.houseBlueprint,
+    imageUrl: IMAGES.terraceNight,
   },
   {
     to: '/contact',
     label: 'Contact',
     title: 'Find us in Weligama',
     detail: 'Directions, check-in times and everything worth knowing before you arrive.',
-    imageUrl: IMAGES.roofingBuilder,
+    imageUrl: IMAGES.buildingFacade,
   },
 ];
 
@@ -164,7 +164,7 @@ export const ROOM_TYPES: RoomType[] = [
     sleeps: 2,
     bedSummary: '1 queen bed',
     category: 'private',
-    imageUrl: IMAGES.heroHouse,
+    imageUrl: IMAGES.roomDouble,
     features: ['Queen bed', 'Private bathroom', 'Air-conditioning', 'Sea view'],
     description:
       'Our private double — a queen bed, your own bathroom and air-conditioning, a short walk from the water.',
@@ -178,7 +178,7 @@ export const ROOM_TYPES: RoomType[] = [
     sleeps: 4,
     bedSummary: '1 bunk bed and 1 queen bed',
     category: 'suite',
-    imageUrl: IMAGES.facadeVentilation,
+    imageUrl: IMAGES.roomKingBed,
     features: ['Sleeps 4', 'Queen bed and bunk bed', 'Private bathroom', 'Air-conditioning'],
     description:
       'The largest room on site: a queen bed plus a bunk, a private bathroom and room for a family of four.',
@@ -192,7 +192,11 @@ export const ROOM_TYPES: RoomType[] = [
     sleeps: 1,
     bedSummary: '1 bunk bed',
     category: 'dorm',
-    imageUrl: IMAGES.roofingBuilder,
+    // The shoot contains no dormitory interiors, so the three dorm listings below
+    // use neutral shots of the building rather than a private double — showing a
+    // queen room against a bunk-bed listing would misrepresent what is booked.
+    // Replace all three once dorm photography exists.
+    imageUrl: IMAGES.roomDoors,
     features: ['Mixed dorm', 'Air-conditioning', 'Shared bathroom', 'Locker'],
     description:
       'A bed in the eight-bed mixed dorm, air-conditioned, with a shared bathroom and space to stash your board.',
@@ -206,7 +210,7 @@ export const ROOM_TYPES: RoomType[] = [
     sleeps: 1,
     bedSummary: '1 bunk bed',
     category: 'dorm',
-    imageUrl: IMAGES.houseBlueprint,
+    imageUrl: IMAGES.corridorPalms,
     features: ['Female only', 'Air-conditioning', 'Shared bathroom', 'Locker'],
     description: 'A bed in the six-bed female-only dorm, air-conditioned with a shared bathroom.',
     privateBathroom: false,
@@ -219,7 +223,7 @@ export const ROOM_TYPES: RoomType[] = [
     sleeps: 1,
     bedSummary: '1 bunk bed',
     category: 'dorm',
-    imageUrl: IMAGES.heroHouse,
+    imageUrl: IMAGES.loungeChairs,
     features: ['Female only', 'Air-conditioning', 'Shared bathroom', 'Locker'],
     description: 'A single bunk in the female-only dorm — the most affordable way to stay on the beach.',
     privateBathroom: false,
@@ -227,33 +231,91 @@ export const ROOM_TYPES: RoomType[] = [
   },
 ];
 
+// Titles describe what is actually in each frame — nothing here is captioned as
+// the beach, because the current shoot does not include one.
 export const GALLERY_PHOTOS = [
   {
     id: 'g-1',
-    title: 'The beach in front of the property',
-    location: 'Weligama, Sri Lanka',
-    imageUrl: IMAGES.heroHouse,
-    year: 'Private beach area',
+    title: 'The building on Matara Road',
+    location: 'Pelena, Weligama',
+    imageUrl: IMAGES.buildingFacade,
+    year: 'Outside',
   },
   {
     id: 'g-2',
-    title: 'Restaurant and bar',
-    location: 'Open daily for breakfast through dinner',
-    imageUrl: IMAGES.facadeVentilation,
-    year: 'On site',
+    title: 'The courtyard and garden',
+    location: 'Weligama, Sri Lanka',
+    imageUrl: IMAGES.courtyardAbove,
+    year: 'Grounds',
   },
   {
     id: 'g-3',
-    title: 'Rooms and dorms',
-    location: 'Air-conditioned, with sea views',
-    imageUrl: IMAGES.houseBlueprint,
-    year: '5 room types',
+    title: 'Restaurant and lounge',
+    location: 'Open daily for breakfast through dinner',
+    imageUrl: IMAGES.restaurantSeating,
+    year: 'On site',
   },
   {
     id: 'g-4',
-    title: 'Garden terrace and coworking',
+    title: 'The kitchen counter',
+    location: 'Indian, seafood, Russian, local and European',
+    imageUrl: IMAGES.restaurantTables,
+    year: 'Restaurant',
+  },
+  {
+    id: 'g-5',
+    title: 'Communal tables',
+    location: 'Breakfast through cocktail hour',
+    imageUrl: IMAGES.restaurantCommunal,
+    year: 'Restaurant',
+  },
+  {
+    id: 'g-6',
+    title: 'Breakfast bowls',
+    location: 'Full English, vegan and Asian breakfasts',
+    imageUrl: IMAGES.foodSmoothieBowl,
+    year: 'Kitchen',
+  },
+  {
+    id: 'g-7',
+    title: 'Cake and iced coffee',
+    location: 'High tea, most afternoons',
+    imageUrl: IMAGES.foodCakeCoffee,
+    year: 'Kitchen',
+  },
+  {
+    id: 'g-8',
+    title: 'The coworking space',
+    location: 'Free WiFi across the property',
+    imageUrl: IMAGES.coworkingPeople,
+    year: 'Work',
+  },
+  {
+    id: 'g-9',
+    title: 'Desks and monitors',
+    location: 'Dedicated workspace for long stays',
+    imageUrl: IMAGES.coworkingDesks,
+    year: 'Work',
+  },
+  {
+    id: 'g-10',
+    title: 'Deluxe Double Room',
+    location: 'Air-conditioned, with a private bathroom',
+    imageUrl: IMAGES.roomDouble,
+    year: 'Rooms',
+  },
+  {
+    id: 'g-11',
+    title: 'The garden terrace',
     location: 'Yoga classes and evening entertainment',
-    imageUrl: IMAGES.roofingBuilder,
+    imageUrl: IMAGES.gardenTerraceDay,
+    year: 'Coliving',
+  },
+  {
+    id: 'g-12',
+    title: 'The terrace after dark',
+    location: 'Where most evenings end up',
+    imageUrl: IMAGES.terraceNight,
     year: 'Coliving',
   },
 ];

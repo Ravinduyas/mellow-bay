@@ -7,11 +7,12 @@ interface HeroSectionProps {
   onOpenQuiz: () => void;
 }
 
+// Landscape crops only — these run full-bleed behind the headline.
 const SLIDES = [
-  { src: IMAGES.heroHouse, alt: 'The beach in front of Mellow Bay' },
-  { src: IMAGES.facadeVentilation, alt: 'The restaurant and terrace' },
-  { src: IMAGES.roofingBuilder, alt: 'The garden and coworking terrace' },
-  { src: IMAGES.houseBlueprint, alt: 'Rooms at Mellow Bay' },
+  { src: IMAGES.restaurantSeating, alt: 'The restaurant and lounge at Mellow Bay' },
+  { src: IMAGES.coworkingPeople, alt: 'Guests working in the coworking space' },
+  { src: IMAGES.gardenTerraceDay, alt: 'The garden terrace' },
+  { src: IMAGES.roomDoors, alt: 'Guest room doors at Mellow Bay' },
 ];
 
 const INTERVAL = 6000;

@@ -19,7 +19,7 @@ export const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, on
               Around the property
             </h2>
             <p className="text-slate-500 text-xs mt-1">
-              The beach, the restaurant, the rooms and the garden terrace
+              The restaurant, the rooms, the workspace and the garden terrace
             </p>
           </div>
           <button

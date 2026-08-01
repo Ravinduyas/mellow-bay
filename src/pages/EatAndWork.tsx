@@ -22,8 +22,8 @@ export const EatAndWork: React.FC = () => {
         eyebrow="Life at Mellow"
         title="Eat, drink, and get some work done"
         intro="One kitchen running from breakfast to cocktail hour, and a workspace for the people who booked three nights and stayed three weeks."
-        image={IMAGES.facadeVentilation}
-        imageAlt="The restaurant and terrace at Mellow Bay"
+        image={IMAGES.restaurantSeating}
+        imageAlt="The restaurant and lounge at Mellow Bay"
       />
 
       <Slab>
@@ -98,8 +98,8 @@ export const EatAndWork: React.FC = () => {
               <div className="rounded-[24px] overflow-hidden bg-white border border-slate-200/70">
                 <div className="aspect-[16/9] bg-slate-100 overflow-hidden">
                   <img
-                    src={IMAGES.houseBlueprint}
-                    alt="Breakfast"
+                    src={IMAGES.foodSmoothieBowl}
+                    alt="A breakfast bowl with fruit, granola and coconut"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
@@ -202,8 +202,8 @@ export const EatAndWork: React.FC = () => {
             <div className="rounded-[24px] bg-white border border-slate-200/70 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
               <div className="lg:col-span-5 aspect-[4/3] lg:aspect-auto lg:min-h-[280px] bg-slate-100 overflow-hidden">
                 <img
-                  src={IMAGES.roofingBuilder}
-                  alt="The garden terrace"
+                  src={IMAGES.gardenTerraceDay}
+                  alt="Guests on the garden terrace"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />
