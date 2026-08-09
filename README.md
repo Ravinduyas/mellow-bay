@@ -1,20 +1,55 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Mellow Bay
 
-# Run and deploy your AI Studio app
+Site for Mellow Bay Living — a beachfront coliving, coworking space and
+restaurant in Weligama, Sri Lanka.
 
-This contains everything you need to run your app locally.
+Live at <https://ravinduyas.github.io/mellow-bay/>
 
-View your app in AI Studio: https://ai.studio/apps/8412070e-3666-4178-96de-959cf5f19571
+## Layout
 
-## Run Locally
+The repository is a workspace; the site is one part of it.
 
-**Prerequisites:**  Node.js
+| Path              | Contents                                              |
+| ----------------- | ----------------------------------------------------- |
+| `frontend/`       | The React + Vite site. Everything currently deployed.  |
+| `backend/`        | Reserved — empty.                                     |
+| `booking-engine/` | Reserved — empty.                                     |
+| `.github/`        | The Pages deploy workflow. Must stay at the root.      |
 
+## Run locally
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Prerequisites: Node.js 20.
+
+```sh
+cd frontend
+npm install
+npm run dev
+```
+
+`npm run dev` serves from `/mellow-bay/` to match production. To serve from the
+root instead, set `BASE_PATH=/`.
+
+Other scripts, all from `frontend/`:
+
+```sh
+npm run lint     # tsc --noEmit
+npm run build    # production build into frontend/dist
+npm run preview  # serve the built output
+```
+
+Copy `frontend/.env.example` to `frontend/.env.local` and fill in the values if
+you need the Gemini-backed features.
+
+## Deployment
+
+Pushing to `main` builds `frontend/` and publishes `frontend/dist` to GitHub
+Pages via `.github/workflows/deploy.yml`.
+
+The repository's Pages source must stay set to **GitHub Actions** (Settings →
+Pages). Switching it to "Deploy from a branch" makes GitHub serve the raw repo
+root instead of the built output, which renders as a blank page.
+
+Deep links rely on `frontend/public/404.html`, which encodes the path into a
+query string that `index.html` decodes before React Router reads the URL. This
+is the standard SPA workaround for Pages; a direct hit on a subpage returns a
+404 status before the redirect resolves.

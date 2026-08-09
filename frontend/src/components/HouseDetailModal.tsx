@@ -130,7 +130,7 @@ export const HouseDetailModal: React.FC<RoomDetailModalProps> = ({
                 onClose();
                 onOpenQuiz();
               }}
-              className="w-full py-3 bg-plum hover:bg-plum-dark text-white font-medium text-xs rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3 bg-plum hover:bg-plum-dark text-white font-medium text-xs rounded-xl pressable transition-colors cursor-pointer flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
               <span>Check availability for these dates</span>

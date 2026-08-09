@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, LayoutGrid, Settings } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { SERVICES_DATA, SERVICE_HIGHLIGHTS } from '../data/mockData';
+import { TiltLink } from './Tilt';
 
 const HIGHLIGHT_ICONS = [LayoutGrid, Settings];
 
@@ -40,17 +40,18 @@ export const ServicesSection: React.FC = () => {
         {/* Right column: three horizontal service cards */}
         <div className="lg:col-span-7 space-y-3.5">
           {SERVICES_DATA.map((card) => (
-            <Link
+            <TiltLink
               key={card.id}
               to={card.href}
-              className="group bg-white rounded-2xl p-3.5 border border-slate-200/70 shadow-[0_1px_2px_rgba(16,17,20,0.04)] hover:shadow-md hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-start gap-5"
+              flat
+              className="group bg-white rounded-2xl p-3.5 border border-slate-200/70 elev-1 hover:border-slate-300 flex flex-col sm:flex-row sm:items-start gap-5"
             >
               <div className="w-full sm:w-[104px] h-32 sm:h-[104px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
                 <img
                   src={card.imageUrl}
                   alt={card.title}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="tilt-layer w-full h-full object-cover scale-[1.06] transition-transform duration-500 group-hover:scale-[1.12]"
                 />
               </div>
 
@@ -61,7 +62,7 @@ export const ServicesSection: React.FC = () => {
                 </h3>
                 <p className="text-slate-500 text-[11px] leading-relaxed">{card.description}</p>
               </div>
-            </Link>
+            </TiltLink>
           ))}
         </div>
       </div>

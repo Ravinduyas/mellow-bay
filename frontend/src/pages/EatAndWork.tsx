@@ -223,7 +223,7 @@ export const EatAndWork: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={openEnquiry}
-                    className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-6 py-3 rounded-full transition-colors cursor-pointer"
+                    className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-6 py-3 rounded-full pressable transition-colors cursor-pointer"
                   >
                     Enquire about long stays
                   </button>

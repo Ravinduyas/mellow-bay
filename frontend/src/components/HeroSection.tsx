@@ -49,8 +49,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenQuiz }) => {
             src={slide.src}
             alt={i === index ? slide.alt : ''}
             aria-hidden={i === index ? undefined : true}
+            data-active={i === index}
             referrerPolicy="no-referrer"
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-out ${
+            className={`hero-slide absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-out ${
               i === index ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -79,7 +80,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenQuiz }) => {
 
             <button
               onClick={onOpenQuiz}
-              className="bg-plum hover:bg-plum-dark text-white text-xs font-medium tracking-wide px-8 py-3.5 rounded-[10px] transition-colors cursor-pointer shadow-lg"
+              className="bg-plum hover:bg-plum-dark text-white text-xs font-medium tracking-wide px-8 py-3.5 rounded-[10px] pressable transition-colors cursor-pointer"
             >
               {HERO_DATA.ctaText}
             </button>

@@ -4,6 +4,7 @@ import { HERO_DATA, ROOM_TYPES } from '../data/mockData';
 import { IMAGES } from '../assets/images';
 import { PageHero } from '../components/PageHero';
 import { Slab } from '../components/Slab';
+import { TiltBox } from '../components/Tilt';
 import { useModals } from '../ui/ModalContext';
 
 const FILTERS = [
@@ -57,16 +58,17 @@ export const Rooms: React.FC = () => {
           {/* Room list */}
           <div className="space-y-4">
             {rooms.map((room) => (
-              <article
+              <TiltBox
                 key={room.id}
-                className="bg-white rounded-[20px] border border-slate-200/70 overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-0 hover:shadow-md transition-shadow"
+                flat
+                className="bg-white rounded-[20px] border border-slate-200/70 elev-1 overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-0"
               >
                 <div className="md:col-span-4 aspect-[4/3] md:aspect-auto md:min-h-[240px] bg-slate-100 overflow-hidden">
                   <img
                     src={room.imageUrl}
                     alt={room.title}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
+                    className="tilt-layer w-full h-full object-cover scale-[1.06]"
                   />
                 </div>
 
@@ -126,7 +128,7 @@ export const Rooms: React.FC = () => {
                     </a>
                   </div>
                 </div>
-              </article>
+              </TiltBox>
             ))}
           </div>
 
@@ -141,7 +143,7 @@ export const Rooms: React.FC = () => {
             </div>
             <button
               onClick={openEnquiry}
-              className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-7 py-3.5 rounded-full transition-colors cursor-pointer shrink-0"
+              className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-7 py-3.5 rounded-full pressable transition-colors cursor-pointer shrink-0"
             >
               Check availability
             </button>

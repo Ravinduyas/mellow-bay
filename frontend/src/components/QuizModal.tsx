@@ -348,7 +348,7 @@ export const QuizModal: React.FC<EnquiryModalProps> = ({ isOpen, onClose }) => {
                   </button>
                   <button
                     type="submit"
-                    className="bg-plum hover:bg-plum-dark text-white font-medium text-xs px-7 py-3 rounded-xl transition-colors cursor-pointer"
+                    className="bg-plum hover:bg-plum-dark text-white font-medium text-xs px-7 py-3 rounded-xl pressable transition-colors cursor-pointer"
                   >
                     Send enquiry
                   </button>
@@ -372,7 +372,7 @@ export const QuizModal: React.FC<EnquiryModalProps> = ({ isOpen, onClose }) => {
                 href={HERO_DATA.bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-plum hover:bg-plum-dark text-white font-medium text-xs px-6 py-3 rounded-xl transition-colors"
+                className="bg-plum hover:bg-plum-dark text-white font-medium text-xs px-6 py-3 rounded-xl pressable transition-colors"
               >
                 Book on Booking.com
               </a>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, X } from 'lucide-react';
 import { GALLERY_PHOTOS } from '../data/mockData';
+import { TiltBox } from './Tilt';
 
 interface PhotoGalleryModalProps {
   isOpen: boolean;
@@ -33,12 +34,12 @@ export const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, on
 
         <div className="overflow-y-auto py-6 pr-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
           {GALLERY_PHOTOS.map((item) => (
-            <div key={item.id} className="group rounded-2xl overflow-hidden relative bg-ink">
+            <TiltBox key={item.id} className="group rounded-2xl overflow-hidden relative bg-ink">
               <img
                 src={item.imageUrl}
                 alt={item.title}
                 referrerPolicy="no-referrer"
-                className="w-full h-[260px] object-cover transition-transform duration-500 group-hover:scale-105"
+                className="tilt-layer w-full h-[260px] object-cover scale-[1.06] transition-transform duration-500 group-hover:scale-[1.12]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/25 to-transparent flex flex-col justify-end p-5 text-white">
                 <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-white/70 mb-1.5">
@@ -50,7 +51,7 @@ export const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, on
                   <span>{item.location}</span>
                 </div>
               </div>
-            </div>
+            </TiltBox>
           ))}
         </div>
       </div>

@@ -3,6 +3,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { IMAGES } from '../assets/images';
 import { HERO_DATA, REVIEW_CATEGORIES } from '../data/mockData';
+import { TiltBox } from './Tilt';
 
 interface GridFeaturesSectionProps {
   onOpenReviews: () => void;
@@ -50,7 +51,7 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
       {/* Four-card mosaic */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* 1 — Private beach */}
-        <article className="bg-white rounded-[20px] p-4 border border-slate-200/70 flex flex-col min-h-[300px]">
+        <TiltBox className="bg-white rounded-[20px] p-4 border border-slate-200/70 elev-1 flex flex-col min-h-[300px]">
           <h3 className="text-ink text-[15px] font-medium leading-snug">
             Our own private beach area
           </h3>
@@ -62,16 +63,16 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
               src={IMAGES.courtyardAbove}
               alt="The courtyard and garden, looking out over the palms"
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover"
+              className="tilt-layer w-full h-full object-cover scale-[1.06]"
             />
             <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-ink/45 to-transparent">
               <MoreButton onClick={onOpenGallery} label="See photos" />
             </div>
           </div>
-        </article>
+        </TiltBox>
 
         {/* 2 — Guest rating, straight from the listing */}
-        <article className="bg-white rounded-[20px] p-4 border border-slate-200/70 flex flex-col min-h-[300px]">
+        <TiltBox className="bg-white rounded-[20px] p-4 border border-slate-200/70 elev-1 flex flex-col min-h-[300px]">
           <h3 className="text-ink text-[15px] font-medium leading-snug">
             Rated {HERO_DATA.rating} by {HERO_DATA.reviewsCount} guests
           </h3>
@@ -96,10 +97,10 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
           <div className="mt-4">
             <MoreButton onClick={onOpenReviews} label="See scores" />
           </div>
-        </article>
+        </TiltBox>
 
         {/* 3 — Restaurant (dark) */}
-        <article className="bg-ink rounded-[20px] p-4 flex flex-col min-h-[300px]">
+        <TiltBox className="bg-ink rounded-[20px] p-4 flex flex-col min-h-[300px] elev-2">
           <h3 className="text-white text-[15px] font-medium leading-snug">
             Restaurant and bar open all day
           </h3>
@@ -109,16 +110,16 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
               src={IMAGES.restaurantTables}
               alt="The restaurant, with the kitchen counter behind"
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover opacity-90"
+              className="tilt-layer w-full h-full object-cover opacity-90 scale-[1.06]"
             />
             <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-ink/80 to-transparent">
               <MoreLink to="/eat-and-work#eat" label="See the menu" />
             </div>
           </div>
-        </article>
+        </TiltBox>
 
         {/* 4 — Coworking */}
-        <article className="bg-white rounded-[20px] p-4 border border-slate-200/70 flex flex-col min-h-[300px]">
+        <TiltBox className="bg-white rounded-[20px] p-4 border border-slate-200/70 elev-1 flex flex-col min-h-[300px]">
           <h3 className="text-ink text-[15px] font-medium leading-snug">
             Coworking, yoga and a garden terrace
           </h3>
@@ -128,13 +129,13 @@ export const GridFeaturesSection: React.FC<GridFeaturesSectionProps> = ({
               src={IMAGES.coworkingDesks}
               alt="Desks in the coworking space"
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover"
+              className="tilt-layer w-full h-full object-cover scale-[1.06]"
             />
             <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-ink/45 to-transparent">
               <MoreLink to="/eat-and-work#work" label="Work from here" />
             </div>
           </div>
-        </article>
+        </TiltBox>
       </div>
     </section>
   );

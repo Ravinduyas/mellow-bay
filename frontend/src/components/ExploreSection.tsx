@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { SITE_SECTIONS } from '../data/mockData';
+import { TiltLink } from './Tilt';
 
 /** Closing hub on the home page — a way through to every other page on the site. */
 export const ExploreSection: React.FC = () => (
@@ -17,17 +17,20 @@ export const ExploreSection: React.FC = () => (
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {SITE_SECTIONS.map((section, i) => (
-        <Link
+        <TiltLink
           key={section.to}
           to={section.to}
-          className="group bg-white rounded-[20px] border border-slate-200/70 overflow-hidden flex flex-col hover:shadow-lg hover:border-slate-300 transition-all"
+          glare
+          className="group bg-white rounded-[20px] border border-slate-200/70 overflow-hidden flex flex-col elev-1 hover:border-slate-300"
         >
           <div className="aspect-[4/3] bg-slate-100 overflow-hidden">
+            {/* Scaled a touch past the frame so the parallax shift never
+                exposes an edge as the card tilts. */}
             <img
               src={section.imageUrl}
               alt={section.title}
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="tilt-layer w-full h-full object-cover scale-[1.06] transition-transform duration-500 group-hover:scale-[1.12]"
             />
           </div>
 
@@ -42,7 +45,7 @@ export const ExploreSection: React.FC = () => (
             <h3 className="text-[15px] font-medium leading-snug">{section.title}</h3>
             <p className="text-slate-500 text-[11px] leading-relaxed">{section.detail}</p>
           </div>
-        </Link>
+        </TiltLink>
       ))}
     </div>
   </section>
