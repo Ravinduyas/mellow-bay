@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Bath, BedDouble, Eye, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { HERO_DATA, ROOM_TYPES } from '../data/mockData';
 import { IMAGES } from '../assets/images';
 import { PageHero } from '../components/PageHero';
@@ -16,7 +17,7 @@ const FILTERS = [
 
 export const Rooms: React.FC = () => {
   const [filter, setFilter] = useState('all');
-  const { openRoom, openEnquiry } = useModals();
+  const { openRoom } = useModals();
 
   const rooms = ROOM_TYPES.filter((r) => filter === 'all' || r.category === filter);
 
@@ -141,12 +142,12 @@ export const Rooms: React.FC = () => {
                 free and what it costs.
               </p>
             </div>
-            <button
-              onClick={openEnquiry}
-              className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-7 py-3.5 rounded-full pressable transition-colors cursor-pointer shrink-0"
+            <Link
+              to="/book"
+              className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-7 py-3.5 rounded-full pressable transition-colors shrink-0"
             >
               Check availability
-            </button>
+            </Link>
           </div>
         </main>
       </Slab>

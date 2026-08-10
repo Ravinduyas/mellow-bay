@@ -8,6 +8,7 @@ export const NAV_LINKS = [
   { to: '/eat-and-work', label: 'Eat & work' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
+  { to: '/book', label: 'Book' },
 ];
 
 export const Navbar: React.FC = () => {

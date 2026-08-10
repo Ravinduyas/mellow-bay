@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { HeroSection } from '../components/HeroSection';
 import { ServicesSection } from '../components/ServicesSection';
 import { GridFeaturesSection } from '../components/GridFeaturesSection';
@@ -8,14 +9,15 @@ import { Slab } from '../components/Slab';
 import { useModals } from '../ui/ModalContext';
 
 export const Home: React.FC = () => {
-  const { openEnquiry, openGallery } = useModals();
+  const { openGallery } = useModals();
+  const navigate = useNavigate();
 
   const scrollToReviews = () =>
     document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <>
-      <HeroSection onOpenQuiz={openEnquiry} />
+      <HeroSection onOpenQuiz={() => navigate('/book')} />
 
       <Slab>
         <main>

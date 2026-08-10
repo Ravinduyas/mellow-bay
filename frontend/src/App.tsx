@@ -6,6 +6,8 @@ import { Rooms } from './pages/Rooms';
 import { EatAndWork } from './pages/EatAndWork';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
+import { Book } from './pages/Book';
+import { Admin } from './pages/Admin';
 
 export default function App() {
   return (
@@ -17,6 +19,8 @@ export default function App() {
           <Route path="/eat-and-work" element={<EatAndWork />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/book" element={<Book />} />
+          <Route path="/admin/pricing" element={<Admin />} />
           {/* The two pages these replaced, kept so old links still resolve */}
           <Route path="/restaurant" element={<Navigate to="/eat-and-work#eat" replace />} />
           <Route path="/coworking" element={<Navigate to="/eat-and-work#work" replace />} />
