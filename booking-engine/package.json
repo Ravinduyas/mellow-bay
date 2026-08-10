@@ -1,0 +1,27 @@
+{
+  "name": "@mellow-bay/booking-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared pricing domain for the booking engine — the single source of truth for how a stay is priced.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx src/pricing.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2"
+  }
+}

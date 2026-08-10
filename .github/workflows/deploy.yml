@@ -18,10 +18,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # The site lives in frontend/; the repo root holds the workspace scaffolding.
-    defaults:
-      run:
-        working-directory: frontend
+    # npm workspaces: install and build from the repo root, which owns the
+    # single lockfile and links booking-engine into the frontend.
     steps:
       - uses: actions/checkout@v4
 
@@ -29,16 +27,19 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          # `cache: npm` looks for a lockfile at the repo root, which no longer
-          # exists — point it at the real one or the cache step fails outright.
-          cache-dependency-path: frontend/package-lock.json
 
       - run: npm ci
 
-      - run: npm run build
+      # The frontend imports @mellow-bay/booking-engine from its built output,
+      # so the shared package has to be compiled first.
+      - run: npm run build:engine
 
-      # `working-directory` does not apply to action steps, only to `run`, so
-      # this path stays relative to the repo root.
+      - run: npm run lint
+
+      - run: npm test
+
+      - run: npm run build -w @mellow-bay/frontend
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist

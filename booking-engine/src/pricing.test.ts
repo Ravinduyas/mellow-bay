@@ -1,11 +1,14 @@
 /**
- * Sanity checks for the pricing engine. Run with `npx tsx scripts/check-pricing.ts`.
+ * Checks for the pricing engine and the network validators. Run with
+ * `npm test -w @mellow-bay/booking-engine`.
  *
  * Not a test framework — just enough to prove the arithmetic in the chart is
- * implemented as specified before it goes near a real price.
+ * implemented as specified, and that nothing malformed can reach it, before
+ * either goes near a real price.
  */
-import { DEFAULT_PRICES, airportPickupPrice, nightsBetween, quote, withMargin } from '../src/booking/pricing';
-import { BookingSelection } from '../src/booking/types';
+import { DEFAULT_PRICES, airportPickupPrice, nightsBetween, quote, withMargin } from './pricing.js';
+import { BookingSelection } from './types.js';
+import { validatePriceConfig, validateSelection } from './validate.js';
 
 let failures = 0;
 const check = (name: string, actual: unknown, expected: unknown) => {
@@ -112,6 +115,92 @@ check('pickup band: above every band uses the largest', airportPickupPrice(P, 9)
 {
   const q = quote(base({ addons: { airportPickup: true } }), P);
   check('pickup priced off the larger of room guests and surfers', q.lines.at(-1)!.amount, 75);
+}
+
+// --- price config validation ---------------------------------------------
+{
+  const r = validatePriceConfig(DEFAULT_PRICES);
+  check('defaults are a valid config', r.ok, true);
+}
+{
+  const r = validatePriceConfig(null);
+  check('null config rejected', r.ok, false);
+}
+{
+  // The exact bug this file exists to catch: an invalid margin must not be
+  // silently coerced to 0, which would strip the markup off every room.
+  const bad = { ...DEFAULT_PRICES, coworking: { ...DEFAULT_PRICES.coworking, marginPct: 'lots' } };
+  const r = validatePriceConfig(bad);
+  check('non-numeric coworking margin rejected', r.ok, false);
+}
+{
+  const bad = { ...DEFAULT_PRICES, rooms: { ...DEFAULT_PRICES.rooms, dorm: { ...DEFAULT_PRICES.rooms.dorm, basePerNight: NaN } } };
+  check('NaN price rejected', validatePriceConfig(bad).ok, false);
+}
+{
+  const bad = { ...DEFAULT_PRICES, rooms: { ...DEFAULT_PRICES.rooms, dorm: { ...DEFAULT_PRICES.rooms.dorm, basePerNight: -5 } } };
+  check('negative price rejected', validatePriceConfig(bad).ok, false);
+}
+{
+  const bad = { ...DEFAULT_PRICES, rooms: { ...DEFAULT_PRICES.rooms, double: { ...DEFAULT_PRICES.rooms.double, includedPeople: 5, maxPeople: 2 } } };
+  check('included > max rejected', validatePriceConfig(bad).ok, false);
+}
+{
+  const bad = { ...DEFAULT_PRICES, addons: { airportPickup: [] } };
+  check('empty pickup bands rejected', validatePriceConfig(bad).ok, false);
+}
+{
+  // Bands arriving out of order must be sorted, or the first-match lookup
+  // would price a party of 4 off the "up to 3" band.
+  const unsorted = {
+    ...DEFAULT_PRICES,
+    addons: { airportPickup: [{ upToPeople: 4, price: 100 }, { upToPeople: 3, price: 75 }] },
+  };
+  const r = validatePriceConfig(unsorted);
+  check('pickup bands are sorted on the way in', r.ok && r.value.addons.airportPickup.map((b) => b.upToPeople), [3, 4]);
+  if (r.ok) check('sorted bands price a party of 4 correctly', airportPickupPrice(r.value, 4), 100);
+}
+{
+  const bad = { ...DEFAULT_PRICES, currency: 'euros' };
+  check('bad currency code rejected', validatePriceConfig(bad).ok, false);
+}
+
+// --- selection validation -------------------------------------------------
+{
+  const r = validateSelection(base(), P);
+  check('a well-formed selection is accepted', r.ok, true);
+}
+{
+  check('unknown model rejected', validateSelection(base({ model: 'rooms+jetski' as never }), P).ok, false);
+}
+{
+  check('reversed dates rejected', validateSelection(base({ checkIn: '2026-09-04', checkOut: '2026-09-01' }), P).ok, false);
+}
+{
+  check('non-existent date rejected', validateSelection(base({ checkIn: '2026-02-31' }), P).ok, false);
+}
+{
+  check('malformed date rejected', validateSelection(base({ checkIn: '01/09/2026' }), P).ok, false);
+}
+{
+  // Capacity comes from the live config, so a client cannot book 20 into a double.
+  check('over-capacity party rejected', validateSelection(base({ room: { kind: 'double', people: 20 } }), P).ok, false);
+}
+{
+  check('zero guests rejected', validateSelection(base({ room: { kind: 'double', people: 0 } }), P).ok, false);
+}
+{
+  const r = validateSelection(base({ model: 'rooms-surf', surf: { date: '2026-09-02', guests: [] } }), P);
+  check('surf booking with nobody surfing rejected', r.ok, false);
+}
+{
+  const r = validateSelection({ ...base(), addons: { airportPickup: 'yes' } }, P);
+  check('non-boolean addon rejected', r.ok, false);
+}
+{
+  // Unknown extra fields should be dropped, not carried into the quote.
+  const r = validateSelection({ ...base(), evilField: 'x', total: 0 }, P);
+  check('unknown fields are stripped', r.ok && 'evilField' in r.value, false);
 }
 
 console.log(failures === 0 ? '\nAll checks passed.' : `\n${failures} check(s) failed.`);

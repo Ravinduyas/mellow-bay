@@ -8,7 +8,7 @@ import {
   QuoteLine,
   ROOM_LABELS,
   SEAT_LABELS,
-} from './types';
+} from './types.js';
 
 /**
  * Starting prices. Every figure here is a placeholder — the chart specifies the

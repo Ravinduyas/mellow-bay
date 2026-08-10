@@ -1,0 +1,20 @@
+{
+  "name": "mellow-bay",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "booking-engine",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm run build -w @mellow-bay/booking-engine && npm run build -w @mellow-bay/frontend",
+    "build:engine": "npm run build -w @mellow-bay/booking-engine",
+    "build:backend": "npm run build -w @mellow-bay/booking-engine && npm run build -w @mellow-bay/backend",
+    "dev:frontend": "npm run dev -w @mellow-bay/frontend",
+    "dev:backend": "npm run dev -w @mellow-bay/backend",
+    "lint": "npm run lint -w @mellow-bay/booking-engine && npm run lint -w @mellow-bay/backend && npm run lint -w @mellow-bay/frontend",
+    "test": "npm run test -w @mellow-bay/booking-engine"
+  }
+}

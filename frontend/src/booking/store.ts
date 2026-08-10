@@ -1,67 +1,40 @@
 import { useCallback, useEffect, useState } from 'react';
-import { DEFAULT_PRICES } from './pricing';
-import { PriceConfig } from './types';
+import { DEFAULT_PRICES, PriceConfig, validatePriceConfig } from '@mellow-bay/booking-engine';
+import { apiEnabled, fetchPrices, resetPricesRemote, savePricesRemote } from './api';
 
 const KEY = 'mellow-bay.prices.v1';
+const TOKEN_KEY = 'mellow-bay.admin-token';
 
 /**
- * Price config persisted to localStorage.
+ * Price config, from the backend when one is configured and from browser
+ * storage when not.
  *
- * This is the seam where a real backend would go: swap `read`/`write` for
- * fetches and nothing above this file changes. Until then the admin screen is
- * genuinely functional, but per-browser — edits do not reach anyone else.
+ * The fallback is what keeps the statically-hosted build usable: with no API
+ * the admin screen still works, it just only affects the browser it was used
+ * in. `source` lets the UI say which of the two is in play rather than leaving
+ * an admin to guess whether a save reached anyone else.
  */
+
+export type PriceSource = 'api' | 'local';
 
 /**
- * Merged field by field against the defaults so a config saved by an older
- * build — missing a room type or a lesson level added since — cannot leave the
- * pricing engine reading `undefined` and rendering NaN across every total.
+ * Read back through the same validator the server uses. Stored config is
+ * editable by hand and may predate a shape change; anything invalid must not
+ * reach the pricing engine, where a missing field becomes NaN on every total.
  */
-function merge(stored: unknown): PriceConfig {
-  if (!stored || typeof stored !== 'object') return DEFAULT_PRICES;
-  const s = stored as Partial<PriceConfig>;
-
-  const rooms = { ...DEFAULT_PRICES.rooms };
-  for (const kind of Object.keys(DEFAULT_PRICES.rooms) as (keyof typeof rooms)[]) {
-    rooms[kind] = { ...DEFAULT_PRICES.rooms[kind], ...(s.rooms?.[kind] ?? {}) };
-  }
-
-  const lesson = { ...DEFAULT_PRICES.surf.lesson };
-  for (const level of Object.keys(DEFAULT_PRICES.surf.lesson) as (keyof typeof lesson)[]) {
-    lesson[level] = { ...DEFAULT_PRICES.surf.lesson[level], ...(s.surf?.lesson?.[level] ?? {}) };
-  }
-
-  return {
-    currency: s.currency ?? DEFAULT_PRICES.currency,
-    rooms,
-    coworking: {
-      seatPerDay: {
-        ...DEFAULT_PRICES.coworking.seatPerDay,
-        ...(s.coworking?.seatPerDay ?? {}),
-      },
-      marginPct: s.coworking?.marginPct ?? DEFAULT_PRICES.coworking.marginPct,
-    },
-    surf: { lesson },
-    addons: {
-      airportPickup: Array.isArray(s.addons?.airportPickup) && s.addons.airportPickup.length
-        ? s.addons.airportPickup
-        : DEFAULT_PRICES.addons.airportPickup,
-    },
-  };
-}
-
-function read(): PriceConfig {
+function readLocal(): PriceConfig {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? merge(JSON.parse(raw)) : DEFAULT_PRICES;
+    if (!raw) return DEFAULT_PRICES;
+    const result = validatePriceConfig(JSON.parse(raw));
+    return result.ok ? result.value : DEFAULT_PRICES;
   } catch {
-    // Private-browsing modes and corrupt JSON both land here. Falling back to
-    // defaults keeps the booking flow usable rather than crashing the page.
+    // Private browsing and corrupt JSON both land here.
     return DEFAULT_PRICES;
   }
 }
 
-function write(config: PriceConfig): boolean {
+function writeLocal(config: PriceConfig): boolean {
   try {
     localStorage.setItem(KEY, JSON.stringify(config));
     return true;
@@ -70,34 +43,132 @@ function write(config: PriceConfig): boolean {
   }
 }
 
-/**
- * Reads the live price config. Kept in sync across tabs — an admin editing
- * prices in one tab should not leave a booking tab quoting stale figures.
- */
+/** The admin token is held in browser storage so it survives a reload. */
+export function readAdminToken(): string {
+  try {
+    return localStorage.getItem(TOKEN_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export function writeAdminToken(token: string): void {
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    /* storage unavailable — the token simply will not persist */
+  }
+}
+
+export interface SaveResult {
+  ok: boolean;
+  error?: string;
+  details?: string[];
+}
+
 export function usePrices() {
-  const [prices, setPrices] = useState<PriceConfig>(read);
+  const [prices, setPrices] = useState<PriceConfig>(() => (apiEnabled ? DEFAULT_PRICES : readLocal()));
+  const [source, setSource] = useState<PriceSource>(apiEnabled ? 'api' : 'local');
+  const [loading, setLoading] = useState(apiEnabled);
 
   useEffect(() => {
+    if (!apiEnabled) return;
+    let cancelled = false;
+
+    fetchPrices()
+      .then((config) => {
+        if (cancelled) return;
+        setPrices(config);
+        setSource('api');
+      })
+      .catch(() => {
+        // The backend is configured but unreachable. Quoting from the bundled
+        // defaults beats showing an empty page, but the source flips to
+        // 'local' so the UI can say the figures may be stale.
+        if (cancelled) return;
+        setPrices(readLocal());
+        setSource('local');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Keep tabs in step when prices live in this browser.
+  useEffect(() => {
+    if (apiEnabled) return;
     const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY) setPrices(read());
+      if (e.key === KEY) setPrices(readLocal());
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  const save = useCallback((next: PriceConfig) => {
-    setPrices(next);
-    return write(next);
-  }, []);
+  const save = useCallback(async (next: PriceConfig): Promise<SaveResult> => {
+    // Validate before sending so an obviously bad config is caught without a
+    // round trip. The server revalidates regardless — this is not the guard.
+    const check = validatePriceConfig(next);
+    // `=== false` rather than `!check.ok`: this project's tsconfig omits
+    // `strict`, and without strictNullChecks the negated form does not narrow
+    // the discriminated union.
+    if (check.ok === false) {
+      return { ok: false, error: 'These prices are not valid.', details: check.errors };
+    }
 
-  const reset = useCallback(() => {
-    setPrices(DEFAULT_PRICES);
+    if (!apiEnabled) {
+      const ok = writeLocal(check.value);
+      setPrices(check.value);
+      return ok ? { ok: true } : { ok: false, error: 'Browser storage is unavailable.' };
+    }
+
+    const token = readAdminToken();
+    if (!token) return { ok: false, error: 'Enter the admin token before saving.' };
+
     try {
-      localStorage.removeItem(KEY);
-    } catch {
-      /* nothing useful to do if storage is unavailable */
+      const saved = await savePricesRemote(check.value, token);
+      setPrices(saved);
+      setSource('api');
+      return { ok: true };
+    } catch (err) {
+      const e = err as { message?: string; status?: number; details?: string[] };
+      return {
+        ok: false,
+        error: e.status === 401 ? 'That admin token was rejected.' : (e.message ?? 'Save failed.'),
+        details: e.details,
+      };
     }
   }, []);
 
-  return { prices, save, reset };
+  const reset = useCallback(async (): Promise<SaveResult> => {
+    if (!apiEnabled) {
+      try {
+        localStorage.removeItem(KEY);
+      } catch {
+        /* nothing useful to do */
+      }
+      setPrices(DEFAULT_PRICES);
+      return { ok: true };
+    }
+
+    const token = readAdminToken();
+    if (!token) return { ok: false, error: 'Enter the admin token before resetting.' };
+
+    try {
+      setPrices(await resetPricesRemote(token));
+      return { ok: true };
+    } catch (err) {
+      const e = err as { message?: string; status?: number };
+      return {
+        ok: false,
+        error: e.status === 401 ? 'That admin token was rejected.' : (e.message ?? 'Reset failed.'),
+      };
+    }
+  }, []);
+
+  return { prices, save, reset, source, loading };
 }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { RotateCcw, Save } from 'lucide-react';
-import { formatMoney, withMargin } from './pricing';
-import { usePrices } from './store';
-import { Counter } from './ui';
+import { formatMoney, withMargin } from '@mellow-bay/booking-engine';
+import { apiEnabled } from './api';
+import { readAdminToken, usePrices, writeAdminToken } from './store';
+import { Counter, Field, inputClass } from './ui';
 import {
   LESSON_LABELS,
   LEVEL_LABELS,
@@ -13,7 +14,7 @@ import {
   SEAT_LABELS,
   SeatType,
   SurfLevel,
-} from './types';
+} from '@mellow-bay/booking-engine';
 
 /**
  * The chart's "Admin Price Adding Flow" — base prices via the +/- counters,
@@ -23,9 +24,11 @@ import {
  * the booking flow.
  */
 export const AdminPricing: React.FC = () => {
-  const { prices, save, reset } = usePrices();
+  const { prices, save, reset, source, loading } = usePrices();
   const [draft, setDraft] = useState<PriceConfig>(prices);
-  const [status, setStatus] = useState<'idle' | 'saved' | 'failed'>('idle');
+  const [token, setToken] = useState(readAdminToken);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
 
   // Pick up an external change (another tab, or a reset) while nothing is
   // being edited here.
@@ -42,14 +45,58 @@ export const AdminPricing: React.FC = () => {
       surf: { lesson: { ...d.surf.lesson, [level]: { ...d.surf.lesson[level], [type]: value } } },
     }));
 
-  const onSave = () => {
-    const ok = save(draft);
-    setStatus(ok ? 'saved' : 'failed');
-    window.setTimeout(() => setStatus('idle'), 2600);
+  const run = async (action: () => Promise<{ ok: boolean; error?: string; details?: string[] }>) => {
+    setBusy(true);
+    const result = await action();
+    setBusy(false);
+    setMessage(
+      result.ok
+        ? { tone: 'ok', text: apiEnabled ? 'Saved. The booking engine is quoting these prices.' : 'Saved to this browser.' }
+        : { tone: 'error', text: [result.error, ...(result.details ?? [])].filter(Boolean).join(' — ') },
+    );
+  };
+
+  const onSave = () => run(() => save(draft));
+  const onReset = () => run(reset);
+
+  const onTokenChange = (value: string) => {
+    setToken(value);
+    writeAdminToken(value);
   };
 
   return (
     <div className="space-y-5">
+      {/* Where these prices live, and the credential needed to change them */}
+      {apiEnabled ? (
+        <Panel
+          title="Connected to the booking service"
+          note={
+            source === 'api'
+              ? 'Prices are read from and written to the server, so a save reaches every visitor.'
+              : 'The booking service could not be reached — the figures below are local defaults and may be out of date.'
+          }
+        >
+          <div className="max-w-sm">
+            <Field label="Admin token" hint="Held in this browser. Required to save or reset.">
+              <input
+                type="password"
+                autoComplete="off"
+                className={inputClass}
+                value={token}
+                onChange={(e) => onTokenChange(e.target.value)}
+              />
+            </Field>
+          </div>
+        </Panel>
+      ) : (
+        <Panel
+          title="No booking service configured"
+          note="Prices are saved to this browser only — other visitors keep seeing the defaults. Set VITE_API_URL at build time to point the site at the backend."
+        >
+          <span className="text-[11px] text-slate-400">Editing local prices.</span>
+        </Panel>
+      )}
+
       {/* Rooms */}
       <Panel
         title="Rooms"
@@ -229,21 +276,24 @@ export const AdminPricing: React.FC = () => {
 
       {/* Actions */}
       <div className="sticky bottom-4 flex flex-wrap items-center justify-between gap-3 rounded-[20px] border border-slate-200/70 bg-white/95 p-4 backdrop-blur elev-2">
-        <p className="text-[11px] text-slate-500">
-          {status === 'saved'
-            ? 'Saved. The booking flow is quoting these prices now.'
-            : status === 'failed'
-              ? 'Could not save — browser storage is unavailable.'
+        <p className={`text-[11px] ${message?.tone === 'error' ? 'text-mail' : 'text-slate-500'}`}>
+          {message
+            ? message.text
+            : loading
+              ? 'Loading prices…'
               : dirty
                 ? 'Unsaved changes.'
-                : 'Prices are stored in this browser only.'}
+                : apiEnabled
+                  ? 'In step with the booking service.'
+                  : 'Prices are stored in this browser only.'}
         </p>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={reset}
-            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[11px] font-medium text-slate-500 transition-colors hover:text-ink cursor-pointer"
+            onClick={onReset}
+            disabled={busy}
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[11px] font-medium text-slate-500 transition-colors hover:text-ink disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Reset to defaults
@@ -251,11 +301,11 @@ export const AdminPricing: React.FC = () => {
           <button
             type="button"
             onClick={onSave}
-            disabled={!dirty}
+            disabled={!dirty || busy}
             className="inline-flex items-center gap-1.5 rounded-full bg-ink px-6 py-3 text-[11px] font-medium text-white transition-colors hover:bg-ink-soft disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
           >
             <Save className="h-3.5 w-3.5" />
-            Save prices
+            {busy ? 'Saving…' : 'Save prices'}
           </button>
         </div>
       </div>

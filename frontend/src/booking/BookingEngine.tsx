@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
-import { formatMoney, quote } from './pricing';
+import { formatMoney, quote } from '@mellow-bay/booking-engine';
+import { apiEnabled, submitEnquiry } from './api';
 import { usePrices } from './store';
 import { ChoiceGroup, Counter, Field, Segmented, inputClass } from './ui';
 import {
@@ -17,7 +18,7 @@ import {
   SeatType,
   SurfGuest,
   SurfLevel,
-} from './types';
+} from '@mellow-bay/booking-engine';
 
 /** yyyy-mm-dd for today, in the viewer's own timezone. */
 const today = () => {
@@ -67,6 +68,8 @@ export const BookingEngine: React.FC = () => {
   const [selection, setSelection] = useState<BookingSelection>(initialSelection);
   const [stepIndex, setStepIndex] = useState(0);
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const includes = MODEL_INCLUDES[selection.model];
 
@@ -97,16 +100,51 @@ export const BookingEngine: React.FC = () => {
 
   const canAdvance = step === 'stay' ? datesValid : step === 'review' ? contactValid : true;
 
+  /**
+   * With a backend the enquiry is recorded server-side and repriced there, so
+   * the total on file is the server's, not the one this browser was showing.
+   * Without one there is nowhere to send it — the flow still confirms, but the
+   * confirmation says plainly that nothing was transmitted.
+   */
+  const onSubmit = async () => {
+    if (!apiEnabled) {
+      setSent(true);
+      return;
+    }
+    setSending(true);
+    setSendError(null);
+    try {
+      await submitEnquiry(selection);
+      setSent(true);
+    } catch (err) {
+      const e = err as { message?: string; details?: string[] };
+      setSendError([e.message, ...(e.details ?? [])].filter(Boolean).join(' — '));
+    } finally {
+      setSending(false);
+    }
+  };
+
   if (sent) {
     return (
       <div className="rounded-[24px] border border-slate-200/70 bg-white p-8 sm:p-12 text-center elev-1">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ink text-white">
           <Check className="h-5 w-5" />
         </div>
-        <h2 className="mt-5 text-2xl font-medium tracking-[-0.02em]">Enquiry sent</h2>
+        <h2 className="mt-5 text-2xl font-medium tracking-[-0.02em]">
+          {apiEnabled ? 'Enquiry sent' : 'Quote ready'}
+        </h2>
         <p className="mx-auto mt-3 max-w-md text-xs leading-relaxed text-slate-500">
-          We have your details and the quote below. Someone will come back to you to confirm
-          availability and take payment — nothing is charged or held yet.
+          {apiEnabled ? (
+            <>
+              We have your details and the quote below. Someone will come back to you to confirm
+              availability and take payment — nothing is charged or held yet.
+            </>
+          ) : (
+            <>
+              This is your quote. This site has no booking service connected, so nothing has been
+              sent to us — take a copy and get in touch, or book through the listing.
+            </>
+          )}
         </p>
         <div className="mx-auto mt-7 max-w-sm">
           <QuotePanel priced={priced} />
@@ -453,6 +491,7 @@ export const BookingEngine: React.FC = () => {
                     A name and email are needed before we can send this.
                   </p>
                 )}
+                {sendError && <p className="text-[11px] text-mail">{sendError}</p>}
               </div>
             )}
           </div>
@@ -472,11 +511,11 @@ export const BookingEngine: React.FC = () => {
             {step === 'review' ? (
               <button
                 type="button"
-                disabled={!contactValid}
-                onClick={() => setSent(true)}
+                disabled={!contactValid || sending}
+                onClick={onSubmit}
                 className="inline-flex items-center gap-1.5 rounded-full bg-plum px-7 py-3 text-[11px] font-medium text-white transition-colors hover:bg-plum-dark disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
               >
-                Send enquiry
+                {sending ? 'Sending…' : apiEnabled ? 'Send enquiry' : 'See your quote'}
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             ) : (
