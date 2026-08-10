@@ -25,15 +25,17 @@ export const PageHero: React.FC<PageHeroProps> = ({ eyebrow, title, intro, image
 
     <div className="relative max-w-6xl mx-auto px-5 sm:px-9 md:px-14 pt-28 sm:pt-32 lg:pt-36 pb-16">
       <div className="lg:max-w-[44%] space-y-5 min-h-[220px] lg:min-h-[340px]">
-        <span className="block text-[9px] font-semibold text-white/60 uppercase tracking-[0.2em]">
+        {/* Dark type: this band is the sand ground with no scrim over it, so the
+            text sits straight on a light surface. */}
+        <span className="block text-[9px] font-semibold text-ink/55 uppercase tracking-[0.2em]">
           {eyebrow}
         </span>
 
-        <h1 className="text-white text-[38px] sm:text-5xl lg:text-[54px] font-medium tracking-[-0.03em] leading-[1.02]">
+        <h1 className="text-ink text-[38px] sm:text-5xl lg:text-[54px] font-medium tracking-[-0.03em] leading-[1.02]">
           {title}
         </h1>
 
-        <p className="text-white/85 text-[13px] sm:text-sm leading-relaxed max-w-sm">{intro}</p>
+        <p className="text-ink/70 text-[13px] sm:text-sm leading-relaxed max-w-sm">{intro}</p>
       </div>
 
       {/* Mobile / tablet image */}

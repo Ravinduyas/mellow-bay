@@ -1,19 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette lifted from the reference design */
-  --color-hero: #a3b8c6;
-  --color-hero-deep: #93aab9;
+  /* The hero ground is a warm sand rather than the original blue-grey. It is a
+     light surface, so anything sitting on it is dark type — see PageHero and the
+     unscrolled Navbar. White on this would be about 1.5:1 and unreadable. */
+  --color-hero: #e9cf9f;
+  --color-hero-deep: #dcbe86;
   --color-plum: #4a2c40;
   --color-plum-dark: #3a2131;
   --color-ink: #101114;
   --color-ink-soft: #1b1c1f;
   --color-paper: #f4f3f1;
   --color-mail: #e2703a;
-  --color-tg: #4a7fd4;
+  /* Was a link blue. Now a bronze from the same warm family, kept dark enough to
+     stay legible as small text on white (5.6:1). */
+  --color-tg: #8a5f20;
   /* Lifted variants of the two link colours, for use on the dark footer */
   --color-mail-bright: #f08a56;
-  --color-tg-bright: #7da9ee;
+  --color-tg-bright: #e9cf9f;
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", sans-serif;

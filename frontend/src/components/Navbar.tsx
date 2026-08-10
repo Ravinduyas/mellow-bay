@@ -28,11 +28,17 @@ export const Navbar: React.FC = () => {
 
   const solid = scrolled || mobileMenuOpen;
 
+  // The home hero is photography under a dark scrim, so white type belongs there.
+  // Every other page opens on the sand PageHero band — a light surface — where
+  // white would be unreadable until the bar goes solid.
+  const overDarkHero = pathname === '/';
+  const onLight = !solid && !overDarkHero;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 text-white transition-colors duration-300 ${
-        solid ? 'bg-ink/92 backdrop-blur-md border-b border-white/10' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        onLight ? 'text-ink' : 'text-white'
+      } ${solid ? 'bg-ink/92 backdrop-blur-md border-b border-white/10' : 'bg-transparent'}`}
     >
       {/* Three columns of equal weight so the links land on the true optical centre,
           regardless of how wide the wordmark or the CTA happen to be. */}
@@ -62,9 +68,14 @@ export const Navbar: React.FC = () => {
         <span className="md:hidden" aria-hidden="true" />
 
         <div className="justify-self-end flex items-center gap-2">
+          {/* A white pill has no edge against the sand, so invert it there. */}
           <Link
             to={HERO_DATA.bookingPath}
-            className="hidden sm:inline-flex bg-white hover:bg-white/90 text-ink text-[10.5px] font-semibold tracking-wide px-4 py-1.5 rounded-full transition-colors whitespace-nowrap"
+            className={`hidden sm:inline-flex text-[10.5px] font-semibold tracking-wide px-4 py-1.5 rounded-full transition-colors whitespace-nowrap ${
+              onLight
+                ? 'bg-ink hover:bg-ink-soft text-white'
+                : 'bg-white hover:bg-white/90 text-ink'
+            }`}
           >
             Book now
           </Link>
