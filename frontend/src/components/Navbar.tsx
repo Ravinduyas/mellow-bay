@@ -62,14 +62,12 @@ export const Navbar: React.FC = () => {
         <span className="md:hidden" aria-hidden="true" />
 
         <div className="justify-self-end flex items-center gap-2">
-          <a
-            href={HERO_DATA.bookingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={HERO_DATA.bookingPath}
             className="hidden sm:inline-flex bg-white hover:bg-white/90 text-ink text-[10.5px] font-semibold tracking-wide px-4 py-1.5 rounded-full transition-colors whitespace-nowrap"
           >
             Book now
-          </a>
+          </Link>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -96,14 +94,12 @@ export const Navbar: React.FC = () => {
             </NavLink>
           ))}
 
-          <a
-            href={HERO_DATA.bookingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={HERO_DATA.bookingPath}
             className="mt-1 flex items-center justify-center w-full py-3 bg-white text-ink rounded-2xl font-semibold text-xs"
           >
             Book now
-          </a>
+          </Link>
         </div>
       )}
     </header>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUpRight, Waves } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { HERO_DATA, NEARBY, REVIEW_CATEGORIES } from '../data/mockData';
 
 export const ReviewsSection: React.FC = () => {
@@ -21,7 +22,7 @@ export const ReviewsSection: React.FC = () => {
           </span>
 
           <span className="text-[11px] text-white/55">
-            {HERO_DATA.reviewsCount} verified guest reviews on Booking.com
+            {HERO_DATA.reviewsCount} verified guest reviews
           </span>
         </div>
 
@@ -69,15 +70,13 @@ export const ReviewsSection: React.FC = () => {
           </div>
         </div>
 
-        <a
-          href={HERO_DATA.bookingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          to={HERO_DATA.bookingPath}
           className="mt-8 inline-flex items-center gap-1.5 text-[11px] font-medium bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-full transition-colors"
         >
-          <span>Read all {HERO_DATA.reviewsCount} reviews on Booking.com</span>
+          <span>Book your stay</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
-        </a>
+        </Link>
       </div>
     </section>
   );

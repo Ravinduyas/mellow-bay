@@ -12,7 +12,7 @@ export interface RoomType {
   seaView: boolean;
 }
 
-/** A rated category as published on the property's Booking.com listing. */
+/** A rated category from published guest reviews. */
 export interface ReviewCategory {
   label: string;
   score: number;

@@ -10,10 +10,9 @@ import {
 } from '../data/mockData';
 import { PageHero } from '../components/PageHero';
 import { Slab } from '../components/Slab';
-import { useModals } from '../ui/ModalContext';
 
 export const About: React.FC = () => {
-  const { openEnquiry } = useModals();
+  
   const location = REVIEW_CATEGORIES.find((c) => c.label === 'Location');
 
   const stats = [
@@ -114,12 +113,12 @@ export const About: React.FC = () => {
                   See the rooms
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
-                <button
-                  onClick={openEnquiry}
-                  className="bg-white/10 hover:bg-white/20 text-white text-xs font-medium px-6 py-3 rounded-full transition-colors cursor-pointer"
+                <Link
+                  to="/book"
+                  className="bg-white/10 hover:bg-white/20 text-white text-xs font-medium px-6 py-3 rounded-full transition-colors"
                 >
                   Check availability
-                </button>
+                </Link>
               </div>
             </div>
 

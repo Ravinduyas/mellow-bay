@@ -3,10 +3,8 @@ import { ArrowRight, ArrowUp, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HERO_DATA } from '../data/mockData';
 import { NAV_LINKS } from './Navbar';
-import { useModals } from '../ui/ModalContext';
 
 export const Footer: React.FC = () => {
-  const { openEnquiry } = useModals();
   const [contactInput, setContactInput] = useState('');
   const [sent, setSent] = useState(false);
 
@@ -43,14 +41,12 @@ export const Footer: React.FC = () => {
 
           <div className="md:col-span-2">
             <span className={label}>Book</span>
-            <a
-              href={HERO_DATA.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to={HERO_DATA.bookingPath}
               className="text-tg-bright text-xl sm:text-[26px] tracking-[-0.03em] hover:opacity-70 transition-opacity"
             >
-              booking.com
-            </a>
+              Book direct
+            </Link>
           </div>
 
           <div className="md:col-span-5">
@@ -102,12 +98,12 @@ export const Footer: React.FC = () => {
 
         {/* Bottom action bar */}
         <div className="mt-10 flex items-center justify-between gap-4">
-          <button
-            onClick={openEnquiry}
-            className="bg-white hover:bg-white/90 text-ink text-xs font-medium px-7 sm:px-9 py-4 rounded-full transition-colors cursor-pointer shrink-0"
+          <Link
+            to={HERO_DATA.bookingPath}
+            className="bg-white hover:bg-white/90 text-ink text-xs font-medium px-7 sm:px-9 py-4 rounded-full transition-colors shrink-0"
           >
             {HERO_DATA.ctaText}
-          </button>
+          </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:gap-x-9 text-[11px] sm:text-xs text-white/50">
             {NAV_LINKS.map((link) => (

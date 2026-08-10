@@ -2,7 +2,6 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 import { RoomType } from '../types';
 
 interface ModalApi {
-  openEnquiry: () => void;
   openGallery: () => void;
   openCallback: () => void;
   openRoom: (room: RoomType) => void;
@@ -18,7 +17,6 @@ export const useModals = (): ModalApi => {
 };
 
 interface ModalState {
-  enquiry: boolean;
   gallery: boolean;
   callback: boolean;
   room: RoomType | null;
@@ -26,7 +24,6 @@ interface ModalState {
 
 export const useModalState = () => {
   const [state, setState] = useState<ModalState>({
-    enquiry: false,
     gallery: false,
     callback: false,
     room: null,
@@ -34,7 +31,6 @@ export const useModalState = () => {
 
   const api = useMemo<ModalApi>(
     () => ({
-      openEnquiry: () => setState((s) => ({ ...s, enquiry: true })),
       openGallery: () => setState((s) => ({ ...s, gallery: true })),
       openCallback: () => setState((s) => ({ ...s, callback: true })),
       openRoom: (room) => setState((s) => ({ ...s, room })),
@@ -44,7 +40,6 @@ export const useModalState = () => {
 
   const close = useMemo(
     () => ({
-      enquiry: () => setState((s) => ({ ...s, enquiry: false })),
       gallery: () => setState((s) => ({ ...s, gallery: false })),
       callback: () => setState((s) => ({ ...s, callback: false })),
       room: () => setState((s) => ({ ...s, room: null })),

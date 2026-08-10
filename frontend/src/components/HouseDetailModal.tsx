@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle2, Sparkles, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { IMAGES } from '../assets/images';
 import { HERO_DATA } from '../data/mockData';
 import { RoomType } from '../types';
@@ -7,13 +8,13 @@ import { RoomType } from '../types';
 interface RoomDetailModalProps {
   project: RoomType | null;
   onClose: () => void;
-  onOpenQuiz: () => void;
+
 }
 
 export const HouseDetailModal: React.FC<RoomDetailModalProps> = ({
   project,
   onClose,
-  onOpenQuiz,
+
 }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -92,7 +93,7 @@ export const HouseDetailModal: React.FC<RoomDetailModalProps> = ({
                 {HERO_DATA.checkOut}
               </div>
               <div className="text-[10px] text-white/50">
-                Minimum check-in age {HERO_DATA.minAge}. Rates and availability on Booking.com.
+                Minimum check-in age {HERO_DATA.minAge}. Prices are confirmed when we reply.
               </div>
             </div>
 
@@ -125,16 +126,14 @@ export const HouseDetailModal: React.FC<RoomDetailModalProps> = ({
               </div>
             </div>
 
-            <button
-              onClick={() => {
-                onClose();
-                onOpenQuiz();
-              }}
-              className="w-full py-3 bg-plum hover:bg-plum-dark text-white font-medium text-xs rounded-xl pressable transition-colors cursor-pointer flex items-center justify-center gap-2"
+            <Link
+              to="/book"
+              onClick={onClose}
+              className="w-full py-3 bg-plum hover:bg-plum-dark text-white font-medium text-xs rounded-xl pressable transition-colors flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
-              <span>Check availability for these dates</span>
-            </button>
+              <span>Book this room</span>
+            </Link>
           </div>
         </div>
       </div>

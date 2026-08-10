@@ -1,8 +1,9 @@
 import { IMAGES } from '../assets/images';
 import { ReviewCategory, RoomType, ServiceDetail } from '../types';
 
-// Everything factual below is taken from the property's Booking.com listing:
-// https://www.booking.com/hotel/lk/om-surf-club.html
+// The property details below were transcribed from the original listing. Booking
+// itself is handled on this site — see the booking engine at /book — so there is
+// no outbound booking link here.
 export const HERO_DATA = {
   companyName: 'Mellow Bay',
   legalName: 'Mellow Bay Living Beach Coworking & Coliving',
@@ -11,13 +12,14 @@ export const HERO_DATA = {
   description: 'Beachfront coliving and coworking\non the south coast of Sri Lanka',
   caption: 'Private beach, restaurant and workspace\nsix minutes from Weligama Beach',
   ctaText: 'Check availability',
-  // TODO: phone + email are still placeholders — Booking.com does not publish them.
+  // TODO: phone + email are still placeholders — real ones needed before launch.
   phone: '+1 (800) 555-0199',
   phoneClean: '+18005550199',
   email: 'email@example.com',
   address: 'Matara Road 693, Pelena, 81700 Weligama, Sri Lanka',
   city: 'Weligama, Sri Lanka',
-  bookingUrl: 'https://www.booking.com/hotel/lk/om-surf-club.html',
+  /** Every "book" call to action goes here — the on-site booking engine. */
+  bookingPath: '/book',
   checkIn: '2:00 PM – 10:00 PM',
   checkOut: '7:00 AM – 10:00 PM',
   minAge: 18,

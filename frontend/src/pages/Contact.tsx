@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUpRight, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { IMAGES } from '../assets/images';
 import { HERO_DATA, HOUSE_RULES, NEARBY } from '../data/mockData';
 import { PageHero } from '../components/PageHero';
@@ -7,7 +8,7 @@ import { Slab } from '../components/Slab';
 import { useModals } from '../ui/ModalContext';
 
 export const Contact: React.FC = () => {
-  const { openCallback, openEnquiry } = useModals();
+  const { openCallback } = useModals();
 
   return (
     <>
@@ -57,27 +58,19 @@ export const Contact: React.FC = () => {
                   Book, or just ask
                 </h2>
                 <p className="text-white/55 text-[11.5px] leading-relaxed">
-                  Rates and live availability are on Booking.com. For anything else — airport
-                  pickup, long stays, a table in the restaurant — send us a note.
+                  Build your stay and get a price in a couple of minutes. For anything else —
+                  airport pickup, long stays, a table in the restaurant — send us a note.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <a
-                  href={HERO_DATA.bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to={HERO_DATA.bookingPath}
                   className="w-full inline-flex items-center justify-center gap-1.5 bg-white hover:bg-white/90 text-ink text-xs font-medium py-3.5 rounded-full transition-colors"
                 >
-                  Book on Booking.com
+                  Book your stay
                   <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-                <button
-                  onClick={openEnquiry}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-medium py-3.5 rounded-full transition-colors cursor-pointer"
-                >
-                  Check availability
-                </button>
+                </Link>
                 <button
                   onClick={openCallback}
                   className="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-medium py-3.5 rounded-full transition-colors cursor-pointer"

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { QuizModal } from './QuizModal';
 import { HouseDetailModal } from './HouseDetailModal';
 import { PhotoGalleryModal } from './PhotoGalleryModal';
 import { CallbackModal } from './CallbackModal';
@@ -55,8 +54,7 @@ export const Layout: React.FC = () => {
           </div>
         </div>
 
-        <QuizModal isOpen={state.enquiry} onClose={close.enquiry} />
-        <HouseDetailModal project={state.room} onClose={close.room} onOpenQuiz={api.openEnquiry} />
+        <HouseDetailModal project={state.room} onClose={close.room} />
         <PhotoGalleryModal isOpen={state.gallery} onClose={close.gallery} />
         <CallbackModal isOpen={state.callback} onClose={close.callback} />
       </div>

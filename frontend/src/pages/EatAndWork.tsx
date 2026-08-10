@@ -13,7 +13,7 @@ const JUMP_LINKS = [
 ];
 
 export const EatAndWork: React.FC = () => {
-  const { openCallback, openEnquiry } = useModals();
+  const { openCallback } = useModals();
   const staff = REVIEW_CATEGORIES.find((c) => c.label === 'Staff');
 
   return (
@@ -221,12 +221,12 @@ export const EatAndWork: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={openEnquiry}
-                    className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-6 py-3 rounded-full pressable transition-colors cursor-pointer"
+                  <Link
+                    to="/book"
+                    className="bg-plum hover:bg-plum-dark text-white text-xs font-medium px-6 py-3 rounded-full pressable transition-colors"
                   >
                     Enquire about long stays
-                  </button>
+                  </Link>
                   <Link
                     to="/rooms"
                     className="inline-flex items-center gap-1.5 bg-paper hover:bg-slate-200 text-ink text-xs font-medium px-6 py-3 rounded-full transition-colors"

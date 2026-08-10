@@ -118,15 +118,13 @@ export const Rooms: React.FC = () => {
                     >
                       View details
                     </button>
-                    <a
-                      href={HERO_DATA.bookingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to={HERO_DATA.bookingPath}
                       className="inline-flex items-center gap-1.5 bg-paper hover:bg-slate-200 text-ink text-[11px] font-medium px-5 py-2.5 rounded-full transition-colors"
                     >
-                      Check rates
+                      Book this room
                       <ArrowUpRight className="w-3 h-3" />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </TiltBox>
