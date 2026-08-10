@@ -113,6 +113,31 @@ try {
   const listed = await call('/api/enquiries', { headers: auth });
   check('all concurrent enquiries were persisted', listed.body.length, 9);
 
+  // --- enquiry detail and staff updates -----------------------------------
+  const id = created.body.id;
+  check('enquiry fetched by id', (await call(`/api/enquiries/${id}`, { headers: auth })).body.id, id);
+  check('enquiry detail needs auth', (await call(`/api/enquiries/${id}`)).status, 401);
+  check('unknown id is 404', (await call('/api/enquiries/does-not-exist', { headers: auth })).status, 404);
+
+  check('bad status rejected', (await call(`/api/enquiries/${id}`, { method: 'PATCH', headers: auth, body: JSON.stringify({ status: 'cancelled' }) })).status, 400);
+  check('empty patch rejected', (await call(`/api/enquiries/${id}`, { method: 'PATCH', headers: auth, body: JSON.stringify({}) })).status, 400);
+
+  const patched = await call(`/api/enquiries/${id}`, { method: 'PATCH', headers: auth, body: JSON.stringify({ status: 'confirmed', staffNotes: 'Called, holding the room.' }) });
+  check('status updated', patched.body.status, 'confirmed');
+  check('staff notes stored', patched.body.staffNotes, 'Called, holding the room.');
+  check('updatedAt stamped', typeof patched.body.updatedAt, 'string');
+  // The quote is a record of what the guest was told, so a staff edit must not
+  // reprice it against the config that happens to be live now.
+  check('patching does not reprice the quote', patched.body.quote.total, created.body.quote.total);
+  check('patching does not alter the selection', patched.body.selection, created.body.selection);
+
+  // --- stats --------------------------------------------------------------
+  const stats = await call('/api/enquiries/stats', { headers: auth });
+  check('stats needs auth', (await call('/api/enquiries/stats')).status, 401);
+  check('stats counts every enquiry', stats.body.total, 9);
+  check('one confirmed', stats.body.byStatus.confirmed, 1);
+  check('confirmed value is the confirmed quote only', stats.body.confirmedValue, created.body.quote.total);
+
   // --- reset --------------------------------------------------------------
   check('reset restores defaults', (await call('/api/prices/reset', { method: 'POST', headers: auth })).body.rooms.double.basePerNight, DEFAULT_PRICES.rooms.double.basePerNight);
 

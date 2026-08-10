@@ -2,12 +2,23 @@ import { timingSafeEqual } from 'node:crypto';
 import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
 import {
+  ENQUIRY_STATUSES,
+  EnquiryStatus,
   quote as computeQuote,
   validateEnquiryContact,
   validatePriceConfig,
   validateSelection,
 } from '@mellow-bay/booking-engine';
-import { listEnquiries, loadPrices, resetPrices, saveEnquiry, savePrices } from './store.js';
+import {
+  enquiryStats,
+  getEnquiry,
+  listEnquiries,
+  loadPrices,
+  resetPrices,
+  saveEnquiry,
+  savePrices,
+  updateEnquiry,
+} from './store.js';
 
 /**
  * The API.
@@ -154,6 +165,70 @@ export function createApp() {
     requireAdmin,
     wrap(async (_req, res) => {
       res.json(await listEnquiries());
+    }),
+  );
+
+  app.get(
+    '/api/enquiries/stats',
+    requireAdmin,
+    wrap(async (_req, res) => {
+      res.json(await enquiryStats());
+    }),
+  );
+
+  app.get(
+    '/api/enquiries/:id',
+    requireAdmin,
+    wrap(async (req, res) => {
+      const found = await getEnquiry(req.params.id);
+      if (!found) {
+        res.status(404).json({ error: 'Enquiry not found' });
+        return;
+      }
+      res.json(found);
+    }),
+  );
+
+  app.patch(
+    '/api/enquiries/:id',
+    requireAdmin,
+    wrap(async (req, res) => {
+      const body = (req.body ?? {}) as { status?: unknown; staffNotes?: unknown };
+      const errors: string[] = [];
+
+      let status: EnquiryStatus | undefined;
+      if (body.status !== undefined) {
+        if (typeof body.status !== 'string' || !ENQUIRY_STATUSES.includes(body.status as EnquiryStatus)) {
+          errors.push(`status must be one of: ${ENQUIRY_STATUSES.join(', ')}`);
+        } else {
+          status = body.status as EnquiryStatus;
+        }
+      }
+
+      let staffNotes: string | undefined;
+      if (body.staffNotes !== undefined) {
+        if (typeof body.staffNotes !== 'string' || body.staffNotes.length > 4000) {
+          errors.push('staffNotes must be a string of 4000 characters or fewer');
+        } else {
+          staffNotes = body.staffNotes;
+        }
+      }
+
+      if (errors.length) {
+        res.status(400).json({ error: 'Invalid update', details: errors });
+        return;
+      }
+      if (status === undefined && staffNotes === undefined) {
+        res.status(400).json({ error: 'Nothing to update' });
+        return;
+      }
+
+      const updated = await updateEnquiry(req.params.id, { status, staffNotes });
+      if (!updated) {
+        res.status(404).json({ error: 'Enquiry not found' });
+        return;
+      }
+      res.json(updated);
     }),
   );
 

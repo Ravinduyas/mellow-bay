@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { formatMoney, quote } from '@mellow-bay/booking-engine';
-import { apiEnabled, submitEnquiry } from './api';
+import { apiEnabled } from './api';
+import { submit } from './enquiries';
 import { usePrices } from './store';
 import { ChoiceGroup, Counter, Field, Segmented, inputClass } from './ui';
 import {
@@ -103,18 +104,15 @@ export const BookingEngine: React.FC = () => {
   /**
    * With a backend the enquiry is recorded server-side and repriced there, so
    * the total on file is the server's, not the one this browser was showing.
-   * Without one there is nowhere to send it — the flow still confirms, but the
-   * confirmation says plainly that nothing was transmitted.
+   * Without one it is recorded in this browser instead, which is what lets the
+   * admin panel show a real booking on the static build — the confirmation says
+   * plainly that nothing reached us.
    */
   const onSubmit = async () => {
-    if (!apiEnabled) {
-      setSent(true);
-      return;
-    }
     setSending(true);
     setSendError(null);
     try {
-      await submitEnquiry(selection);
+      await submit(selection, priced);
       setSent(true);
     } catch (err) {
       const e = err as { message?: string; details?: string[] };
@@ -141,8 +139,9 @@ export const BookingEngine: React.FC = () => {
             </>
           ) : (
             <>
-              This is your quote. This site has no booking service connected, so nothing has been
-              sent to us — take a copy and get in touch, or book through the listing.
+              This is your quote. This site has no booking service connected, so it has been kept
+              in this browser rather than sent to us — take a copy and get in touch, or book
+              through the listing.
             </>
           )}
         </p>
@@ -515,7 +514,7 @@ export const BookingEngine: React.FC = () => {
                 onClick={onSubmit}
                 className="inline-flex items-center gap-1.5 rounded-full bg-plum px-7 py-3 text-[11px] font-medium text-white transition-colors hover:bg-plum-dark disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
               >
-                {sending ? 'Sending…' : apiEnabled ? 'Send enquiry' : 'See your quote'}
+                {sending ? 'Sending…' : apiEnabled ? 'Send enquiry' : 'Save my quote'}
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             ) : (

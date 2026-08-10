@@ -5,6 +5,8 @@ import { dirname, join } from 'node:path';
 import {
   BookingSelection,
   DEFAULT_PRICES,
+  Enquiry,
+  EnquiryStatus,
   PriceConfig,
   Quote,
   validatePriceConfig,
@@ -22,15 +24,6 @@ import {
 const DATA_DIR = process.env.DATA_DIR ?? join(process.cwd(), 'data');
 const PRICES_FILE = join(DATA_DIR, 'prices.json');
 const ENQUIRIES_FILE = join(DATA_DIR, 'enquiries.json');
-
-export interface Enquiry {
-  id: string;
-  createdAt: string;
-  selection: BookingSelection;
-  /** The quote as the server computed it, not as the client claimed it. */
-  quote: Quote;
-  status: 'new' | 'contacted' | 'closed';
-}
 
 /**
  * Write to a temp file and rename over the target. Rename is atomic on the same
@@ -128,4 +121,64 @@ export async function saveEnquiry(
 export async function listEnquiries(): Promise<Enquiry[]> {
   const all = await readJson<Enquiry[]>(ENQUIRIES_FILE, []);
   return [...all].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function getEnquiry(id: string): Promise<Enquiry | null> {
+  const all = await readJson<Enquiry[]>(ENQUIRIES_FILE, []);
+  return all.find((e) => e.id === id) ?? null;
+}
+
+/**
+ * Updates the staff-owned fields only. The selection and the quote are never
+ * touched — an enquiry is a record of what a guest asked for and what they were
+ * quoted, and editing either after the fact would rewrite history.
+ */
+export async function updateEnquiry(
+  id: string,
+  patch: { status?: EnquiryStatus; staffNotes?: string },
+): Promise<Enquiry | null> {
+  const run = enquiryQueue.then(async () => {
+    const all = await readJson<Enquiry[]>(ENQUIRIES_FILE, []);
+    const index = all.findIndex((e) => e.id === id);
+    if (index === -1) return null;
+
+    const updated: Enquiry = {
+      ...all[index],
+      ...(patch.status ? { status: patch.status } : {}),
+      ...(patch.staffNotes !== undefined ? { staffNotes: patch.staffNotes } : {}),
+      updatedAt: new Date().toISOString(),
+    };
+    all[index] = updated;
+    await writeAtomic(ENQUIRIES_FILE, all);
+    return updated;
+  });
+
+  // Shares the enquiry queue with saveEnquiry: a status change landing at the
+  // same moment as a new submission must not drop either write.
+  enquiryQueue = run.catch(() => undefined);
+  return run;
+}
+
+/** Counts and revenue for the admin overview. */
+export async function enquiryStats() {
+  const all = await listEnquiries();
+  const byStatus = all.reduce<Record<string, number>>((acc, e) => {
+    acc[e.status] = (acc[e.status] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  // Confirmed value only — counting every enquiry as revenue would overstate it.
+  const confirmedValue = all
+    .filter((e) => e.status === 'confirmed')
+    .reduce((sum, e) => sum + e.quote.total, 0);
+
+  return {
+    total: all.length,
+    byStatus,
+    confirmedValue,
+    pipelineValue: all
+      .filter((e) => e.status === 'new' || e.status === 'contacted')
+      .reduce((sum, e) => sum + e.quote.total, 0),
+    currency: all[0]?.quote.currency ?? DEFAULT_PRICES.currency,
+  };
 }

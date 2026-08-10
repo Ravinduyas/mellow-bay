@@ -124,3 +124,33 @@ export interface Quote {
   currency: string;
   nights: number;
 }
+
+/* --------------------------------------------------------------- enquiry -- */
+
+export const ENQUIRY_STATUSES = ['new', 'contacted', 'confirmed', 'closed'] as const;
+export type EnquiryStatus = (typeof ENQUIRY_STATUSES)[number];
+
+export const STATUS_LABELS: Record<EnquiryStatus, string> = {
+  new: 'New',
+  contacted: 'Contacted',
+  confirmed: 'Confirmed',
+  closed: 'Closed',
+};
+
+/**
+ * A submitted booking request.
+ *
+ * `quote` is the server's own calculation at the time of submission, kept
+ * verbatim: repricing an old enquiry against today's config would silently
+ * change what a guest was quoted.
+ */
+export interface Enquiry {
+  id: string;
+  createdAt: string;
+  updatedAt?: string;
+  selection: BookingSelection;
+  quote: Quote;
+  status: EnquiryStatus;
+  /** Internal notes, not visible to the guest. */
+  staffNotes?: string;
+}

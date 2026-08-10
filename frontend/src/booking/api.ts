@@ -1,4 +1,10 @@
-import { BookingSelection, PriceConfig, Quote } from '@mellow-bay/booking-engine';
+import {
+  BookingSelection,
+  Enquiry,
+  EnquiryStatus,
+  PriceConfig,
+  Quote,
+} from '@mellow-bay/booking-engine';
 
 /**
  * Client for the booking API.
@@ -70,7 +76,34 @@ export const fetchQuote = (selection: BookingSelection) =>
   });
 
 export const submitEnquiry = (selection: BookingSelection) =>
-  request<{ id: string; quote: Quote }>('/api/enquiries', {
+  request<Enquiry>('/api/enquiries', {
     method: 'POST',
     body: JSON.stringify(selection),
+  });
+
+export interface EnquiryStats {
+  total: number;
+  byStatus: Record<string, number>;
+  confirmedValue: number;
+  pipelineValue: number;
+  currency: string;
+}
+
+const bearer = (token: string) => ({ authorization: `Bearer ${token}` });
+
+export const listEnquiriesRemote = (token: string) =>
+  request<Enquiry[]>('/api/enquiries', { headers: bearer(token) });
+
+export const fetchStatsRemote = (token: string) =>
+  request<EnquiryStats>('/api/enquiries/stats', { headers: bearer(token) });
+
+export const patchEnquiryRemote = (
+  id: string,
+  patch: { status?: EnquiryStatus; staffNotes?: string },
+  token: string,
+) =>
+  request<Enquiry>(`/api/enquiries/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: bearer(token),
+    body: JSON.stringify(patch),
   });

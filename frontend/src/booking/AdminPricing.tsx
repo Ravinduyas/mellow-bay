@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { RotateCcw, Save } from 'lucide-react';
 import { formatMoney, withMargin } from '@mellow-bay/booking-engine';
 import { apiEnabled } from './api';
-import { readAdminToken, usePrices, writeAdminToken } from './store';
-import { Counter, Field, inputClass } from './ui';
+import { usePrices } from './store';
+import { Counter } from './ui';
 import {
   LESSON_LABELS,
   LEVEL_LABELS,
@@ -26,7 +26,6 @@ import {
 export const AdminPricing: React.FC = () => {
   const { prices, save, reset, source, loading } = usePrices();
   const [draft, setDraft] = useState<PriceConfig>(prices);
-  const [token, setToken] = useState(readAdminToken);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
 
@@ -59,42 +58,15 @@ export const AdminPricing: React.FC = () => {
   const onSave = () => run(() => save(draft));
   const onReset = () => run(reset);
 
-  const onTokenChange = (value: string) => {
-    setToken(value);
-    writeAdminToken(value);
-  };
-
   return (
     <div className="space-y-5">
-      {/* Where these prices live, and the credential needed to change them */}
-      {apiEnabled ? (
-        <Panel
-          title="Connected to the booking service"
-          note={
-            source === 'api'
-              ? 'Prices are read from and written to the server, so a save reaches every visitor.'
-              : 'The booking service could not be reached — the figures below are local defaults and may be out of date.'
-          }
-        >
-          <div className="max-w-sm">
-            <Field label="Admin token" hint="Held in this browser. Required to save or reset.">
-              <input
-                type="password"
-                autoComplete="off"
-                className={inputClass}
-                value={token}
-                onChange={(e) => onTokenChange(e.target.value)}
-              />
-            </Field>
-          </div>
-        </Panel>
-      ) : (
-        <Panel
-          title="No booking service configured"
-          note="Prices are saved to this browser only — other visitors keep seeing the defaults. Set VITE_API_URL at build time to point the site at the backend."
-        >
-          <span className="text-[11px] text-slate-400">Editing local prices.</span>
-        </Panel>
+      {apiEnabled && source === 'local' && (
+        <div className="rounded-[16px] border border-mail/30 bg-mail/5 p-4">
+          <p className="text-[11px] leading-relaxed text-ink">
+            The booking service could not be reached — the figures below are local defaults and may
+            be out of date.
+          </p>
+        </div>
       )}
 
       {/* Rooms */}
